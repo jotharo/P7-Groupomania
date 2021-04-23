@@ -17,7 +17,7 @@ module.exports = {
 }
 
 // Middlewares
-git s
+
 // CREATE POST
 
 async function createPost (req, res, next ) {
