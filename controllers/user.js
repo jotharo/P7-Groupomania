@@ -2,7 +2,7 @@
 
 // Packages 
 
-const bcrypt = require('bcrypt');
+//const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
 
@@ -29,22 +29,22 @@ module.exports = {
 
 async function signupUser(req, res, next) {
     // Vérifie les paramètres
-    bcrypt.hash(req.body.password, 10) // Fonction de hachage du mot de passe de la requête : ici on « sale » le MDP 10 fois.
-    .then(hash => { // Récupération du MDP hashé
+    //bcrypt.hash(req.body.password, 10) // Fonction de hachage du mot de passe de la requête : ici on « sale » le MDP 10 fois.
+    //.then(hash => { // Récupération du MDP hashé
         if(req.body.firstName && req.body.lastName && req.body.email && req.body.password) {
             res.status(201).json("{'Votre compte a bien été créé !'}")
             return user.create({
                 email: req.body.email, 
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
-                password: hash,
+                password: req.body.password,
             })     
         }
         else {
             return res.status(400).json("{'error': 'Il manque un ou des paramètres'}")
         }
-    })
-    .catch (error => { res.status(500).json("{'error': 'Impossible d'enregistrer un nouvel utilisateur'}")})
+    /*})
+    .catch (error => { res.status(500).json("{'error': 'Impossible d'enregistrer un nouvel utilisateur'}")})*/
 }
 
 //LOGIN USER
@@ -55,11 +55,12 @@ async function loginUser(req, res, next){
         if (!user) {
           return res.status(401).json({ error: 'Utilisateur non trouvé !' }); // Si pas d'adresse mail similaire : erreur.
         }
-        bcrypt.compare(req.body.password, user.password)  // 2 - Si 1 OK : vérification du mot de passe avec Bcrypt.
-          .then(valid => {
-            if (!valid) {
+        /*bcrypt.compare(req.body.password, user.password)  // 2 - Si 1 OK : vérification du mot de passe avec Bcrypt.
+          .then(valid => {*/
+            /*if (valid) {
               return res.status(401).json({ error: 'Mot de passe incorrect !' });// Si pas de mot de passe similaire dans la DB : erreur.
-            }
+            }*/
+          // todo : Il faut le sauvegarder dans la base de donnée pour ton user
             res.status(200).json({
               userId: user.id,
               token: jwt.sign(              // 3 - Si 2 OK : à la connexion l'user ( sur le frontend ) reçoit un token.
@@ -68,8 +69,8 @@ async function loginUser(req, res, next){
                 { expiresIn: '24h' }        // Expire au bout de 24h.
               )
             });
-          })
-          .catch(error => res.status(500).json({ error }));
+          //})
+          //.catch(error => res.status(500).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
   };

@@ -1,0 +1,16 @@
+1 - Ajouté une colonne token dans la table user
+    - Créer une nouvelle migration return queryInterface.addColumn() (regarder la doc sequelize)
+    - mettre a jour le model user
+    - jouer la migration sur ta base db:migrate:dev
+    - mettre a jour le controller "user"
+
+2 - Finir la création d'un poste
+    - Récupérer le token dans la requete et vérifié qu'il est valide
+    - Récupérer le user associé au token
+    - Créer le post
+
+3 - Implémenter la relation n to n userLikes
+    - Faire une migration pour créer la table user likes
+    - Créer le model user likes
+    - faire les routes pour aimer un post
+    - modifier le retour du controller getAllPost pour inclure la liste des users qui ont like. Si le mdp remonte c'est pas grave je te montrerais comment ne pas l'inclure

@@ -27,8 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     })
   
     post.associate = function(models) {
-        post.belongsTo(models.user, {foreignKey: 'writerId'})
+        post.belongsTo(models.user, {foreignKey: 'writerId', as: "writer"})
+        post.belongsToMany(models.user, {
+            through: models.userLikes,
+            as: "user_likes"
+        })
     }
+
   
     return post
   }

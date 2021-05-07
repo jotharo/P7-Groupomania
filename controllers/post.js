@@ -4,7 +4,8 @@
 
 // Modèle : 'post'
 
-const post = require('../models/index').post
+const post = require('../models').post
+const user = require('../models').user
 
 // Exportation des modules
 
@@ -28,8 +29,28 @@ async function createPost (req, res, next ) {
         attachmentPost = `${req.protocol}://${req.get("host")}/public/${req.file.filename}` 
     }
 
+    //Get the current user
+    const token = req.getHeader("Authorization")
+
+    if(token) {
+        // test si le token est encore valide si tu as le temps
+        // get the user that make the call
+        var user = await user.findOne({
+            where: {
+                token: token
+            }
+        })
+        if (!user) {
+            res.status(401).json("{'error': 'Il faut être authentifié'}")
+        }
+    } else {
+        res.status(401).json("{'error': 'Il faut être authentifié'}")
+    }
+
+
     if( req.body.message || req.body.imageUrl ) {
         return post.create({
+            writerId: user.id,
             message: req.body.message,
             imageUrl: attachmentPost
         }) 

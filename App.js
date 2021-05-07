@@ -2,6 +2,7 @@ const http = require('http')
 const sequelize = require("./config/database")
 const user = require('./models').user
 const post = require('./models').post
+const userLikes = require('./models').userLikes
 
 const express = require('express') 
 const bodyParser = require('body-parser')
@@ -40,7 +41,7 @@ const normalizePort = val => {   // normalizePort : renvoie un port valide sous 
     return false;
   };
 
-const port = normalizePort(process.env.PORT || '3000'); // Déclaration du port 3000 par défaut.
+const port = normalizePort(process.env.PORT || '3002'); // Déclaration du port 3000 par défaut.
 app.set('port', port);
 
 const errorHandler = error => {  // errorHAndler : recherche les différentes erreurs et les gère de manière appropriée.
@@ -67,10 +68,39 @@ const server = http.createServer(app);
 
 server.on('error', errorHandler); // Si erreur au démarrage du serveur : voir errorHandler.
 
-server.on('listening', () => {  // Si réussite au démarrage du serveur : renvoie confirmation.
+server.on('listening', async () => {  // Si réussite au démarrage du serveur : renvoie confirmation.
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
   console.log('Listening on ' + bind);
+
+  /*var test =  await user.create({
+      email: "test3@gmail.com",
+      firstName: "TEST3",
+      lastName: "TEST3",
+      password: "dslkghdskjg",
+      profilPicture: "/tmp"
+  })*/
+
+/*    var userLike = await userLikes.create({
+        userId: user.id,
+        postId: postId,
+    })*/
+
+   var myPost = await post.findAll({
+        include : [
+            {model : user, as: 'writer'},
+            {model: user, as: 'user_likes'}
+        ]
+    })
+    console.log(JSON.stringify(myPost))
+
+    var myUser = await user.findByPk(1, {
+        include: [
+            {model: post, as: 'likes'}
+        ]
+    })
+
+    console.log(JSON.stringify(myUser.likes))
 });
 
 server.listen(port);
